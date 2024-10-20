@@ -1,0 +1,40 @@
+name: Test the Time Window action
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  test_cli:
+    name: Test the CLI
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+  test_action:
+    name: Test the GitHub Action
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Test  Docker action
+        id: time_window
+        uses: ./
+        with:
+          allowed: ""
+          blocked: ""
+
+      - name: Print results
+        shell: bash
+        run: |
+          echo "error: ${{ steps.time_window.outputs.error }}"
+          echo "is_allowed: ${{ steps.time_window.outputs.is_allowed }}"
+          echo "message: ${{ steps.time_window.outputs.message }}"
+          echo "timestamp: ${{ steps.time_window.outputs.timestamp }}"
+          echo "result: ${{ steps.time_window.outputs.result }}"
+          echo "json_error: ${{ fromJSON(steps.time_window.outputs.result).error }}"
+          echo "json_is_allowed: ${{ fromJSON(steps.time_window.outputs.result).isAllowed }}"
+          echo "json_message: ${{ fromJSON(steps.time_window.outputs.result).message }}"
+          echo "json_timestamp: ${{ fromJSON(steps.time_window.outputs.result).timestamp }}"

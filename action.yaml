@@ -1,0 +1,50 @@
+name: Time Window Validator
+description: This action validates a timestamp against allowed and/or blocked time windows.
+author: Paul Landázuri
+branding:
+  icon: clock
+  color: green
+outputs:
+  error:
+    description: Any error returned by the time window validator.
+  is_allowed:
+    description: Boolean result of the time window validator.
+  message:
+    description: Message returned by the time window validator.
+  timestamp:
+    description: The validated Unix timestamp.
+  result:
+    description: Full JSON result.
+inputs:
+  allowed:
+    description: The allowed time windows.
+    required: false
+  blocked:
+    description: The blocked time windows.
+    required: false
+  commit-message:
+    description: The commit message used to check the regular expression against. By default `github.event.head_commit..message || github.event.workflow_run.head_commit.message`
+    required: false
+    default: ${{ github.event.head_commit.message || github.event.workflow_run.head_commit.message }}
+  force-allow-regexp:
+    description: A regular expression to check against the commit message. If matched, this action always returns `is_allowed=true`. By default, `force-time-window`.
+    required: false
+    default: force\-time\-window
+  timestamp:
+    description: Unix timestamp to validate the time windows against. By default, this is the current timestamp.
+    required: false
+    default: '0'
+runs:
+  using: docker
+  image: Dockerfile
+  args:
+    - -allowed
+    - ${{ inputs.allowed }}
+    - -blocked
+    - ${{ inputs.blocked }}
+    - -commit_message
+    - ${{ inputs.commit-message }}
+    - -force_allow_regexp
+    - ${{ inputs.force-allow-regexp }}
+    - -timestamp
+    - ${{ inputs.timestamp }}
