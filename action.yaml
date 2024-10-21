@@ -31,7 +31,7 @@ inputs:
     required: false
     default: force\-time\-window
   timestamp:
-    description: Unix timestamp to validate the time windows against. By default, this is the current timestamp.
+    description: Unix timestamp (in seconds) to validate the time windows against. By default, this is the current timestamp.
     required: false
     default: '0'
 runs:

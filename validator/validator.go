@@ -26,7 +26,7 @@ func NewValidator() (*Validator, error) {
 
 	// init config fields
 	commitMessage := ""
-	timestamp := time.Now()
+	timestamp := time.Now() // FIXME: Timezone!
 	var (
 		err              error
 		allowed          []*TimeWindow

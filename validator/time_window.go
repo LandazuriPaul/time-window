@@ -44,6 +44,7 @@ func (tw *TimeWindow) parseCronExpression() error {
 }
 
 func (tw *TimeWindow) isTimeIn(timestamp time.Time) bool {
+	// FIXME: Timezone!
 	if tw.CronSchedule.Next(timestamp.Add(-tw.Duration)).Before(timestamp) {
 		return true
 	}
