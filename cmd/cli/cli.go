@@ -15,10 +15,10 @@ func main() {
 		return
 	}
 
-	if v.IsForceAllowed() {
+	if v.IsForceValidated() {
 		validator.Result{
-			IsAllowed: true,
-			Message:   fmt.Sprintf("forced allowed with regexp %s and commit message %s", v.ForceAllowRegexp, v.CommitMessage),
+			IsValid:   true,
+			Message:   fmt.Sprintf("forced validated with regexp %s and commit message %s", v.ForceValidRegexp, v.CommitMessage),
 			Timestamp: v.Timestamp.Unix(),
 		}.WriteToGithubOutput()
 		return

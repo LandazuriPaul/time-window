@@ -11,7 +11,7 @@ func init() {
 	os.Args = append(os.Args,
 		"-commit_message",
 		"my nice commit message",
-		"-force_allow_regexp",
+		"-force_valid_regexp",
 		"force\\-time\\-window",
 		"-timestamp",
 		"1729537200", // Monday, October 21, 2024 at 08:00:00 PM UTC

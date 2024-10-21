@@ -38,11 +38,11 @@ jobs:
         shell: bash
         run: |
           echo "error: ${{ steps.time_window.outputs.error }}"
-          echo "is_allowed: ${{ steps.time_window.outputs.is_allowed }}"
+          echo "is_valid: ${{ steps.time_window.outputs.is_valid }}"
           echo "message: ${{ steps.time_window.outputs.message }}"
           echo "timestamp: ${{ steps.time_window.outputs.timestamp }}"
           echo "result: ${{ steps.time_window.outputs.result }}"
           echo "json_error: ${{ fromJSON(steps.time_window.outputs.result).error }}"
-          echo "json_is_allowed: ${{ fromJSON(steps.time_window.outputs.result).isAllowed }}"
+          echo "json_is_valid: ${{ fromJSON(steps.time_window.outputs.result).isValid }}"
           echo "json_message: ${{ fromJSON(steps.time_window.outputs.result).message }}"
           echo "json_timestamp: ${{ fromJSON(steps.time_window.outputs.result).timestamp }}"
