@@ -23,8 +23,16 @@ jobs:
         id: time_window
         uses: ./
         with:
-          allowed: ""
-          blocked: ""
+          allowed: |
+            - name: Office hours
+              cronExpression: "0 9 * * 1-5"
+              duration: 8h
+              timezone: Europe/London
+          blocked: |
+            - name: Christmas holidays
+              cronExpression: "0 0 24 12 *"
+              duration: 96h
+              timezone: Europe/London
 
       - name: Print results
         shell: bash
