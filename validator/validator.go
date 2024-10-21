@@ -50,11 +50,6 @@ func NewValidator() (*Validator, error) {
 		}
 	}
 
-	// if neither allowed nor blocked were provided, return an error
-	if allowed == nil && blocked == nil {
-		return nil, fmt.Errorf("")
-	}
-
 	// forceAllowRegexp
 	if forceAllowRegexpFlag != nil && *forceAllowRegexpFlag != "" {
 		forceAllowRegexp, err = regexp.Compile(*forceAllowRegexpFlag)
