@@ -17,7 +17,7 @@ type Result struct {
 }
 
 func (r Result) GithubFormat() string {
-	return fmt.Sprintf("error=%s\nisAllowed=%t\nmessage=%s\ntimestamp=%d\nresult=%s\n", r.Error, r.IsAllowed, r.Message, r.Timestamp, r)
+	return fmt.Sprintf("error=%s\nis_allowed=%t\nmessage=%s\ntimestamp=%d\nresult=%s\n", r.Error, r.IsAllowed, r.Message, r.Timestamp, r)
 }
 
 func (r Result) Print() {
