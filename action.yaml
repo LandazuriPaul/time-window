@@ -17,10 +17,10 @@ outputs:
     description: Full JSON result.
 inputs:
   allowed:
-    description: The allowed time windows.
+    description: The allowed time windows in YAML.
     required: false
   blocked:
-    description: The blocked time windows.
+    description: The blocked time windows in YAML.
     required: false
   commit-message:
     description: The commit message used to check the regular expression against. By default `github.event.head_commit..message || github.event.workflow_run.head_commit.message`
