@@ -20,11 +20,12 @@ jobs:
     uses: ./.github/workflows/build.yaml
 
   release:
+    name: Release
+    runs-on: ubuntu-latest
+    if: needs.build.result == 'success'
     needs:
       - test
       - build
-    name: Release
-    runs-on: ubuntu-latest
     permissions:
       contents: write # GitHub release
       issues: write # Comment on issues

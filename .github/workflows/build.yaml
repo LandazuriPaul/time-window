@@ -7,13 +7,15 @@ env:
   REGISTRY: ghcr.io
 
 jobs:
-  next_semantic_version:
-    uses: ./.github/workflows/next-semantic-version.yaml
+  get-next-version:
+    uses: semantic-release-action/next-release-version/.github/workflows/next-release-version.yml@v4
 
   docker_image:
-    needs:
-      - next_semantic_version
+    name: Build Docker image
     runs-on: ubuntu-latest
+    if: needs.get-next-version.outputs.new-release-published == 'true'
+    needs:
+      - get-next-version
     permissions:
       contents: write
       packages: write
