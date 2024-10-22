@@ -2,6 +2,10 @@ name: Build artifacts
 
 on:
   workflow_call:
+    inputs:
+      GITHUB_TOKEN:
+        type: string
+        description: GITHUB_TOKEN to access the repository
 
 env:
   REGISTRY: ghcr.io
@@ -9,6 +13,8 @@ env:
 jobs:
   next_semantic_version:
     uses: ./.github/workflows/next-semantic-version.yaml
+    with:
+      GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
 
   docker_image:
     needs:

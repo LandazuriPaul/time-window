@@ -6,7 +6,6 @@ on:
       GITHUB_TOKEN:
         type: string
         description: GITHUB_TOKEN to access the repository
-        default: ${{ secrets.GITHUB_TOKEN }}
 
     outputs:
       next_release_version:
