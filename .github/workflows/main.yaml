@@ -22,7 +22,7 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
-    if: needs.build.result == 'success'
+    if: needs.build.outputs.new-release-published == 'true'
     needs:
       - test
       - build
