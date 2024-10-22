@@ -25,13 +25,13 @@ overtake usual business hours.
 
 ### Inputs
 
-| Parameter            | Default value                                                                                | Description                                                                                                                     |
-|----------------------|----------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------|
-| `allowed`            | `""`                                                                                         | The allowed time windows in YAML. See [`allowed` & `blocked`](#allowed--blocked) for more information.                          |
-| `blocked`            | `""`                                                                                         | The blocked time windows in YAML. See [`allowed` & `blocked`](#allowed--blocked) for more information.                          |
-| `commit-message`     | `${{ github.event.head_commit.message \|\| github.event.workflow_run.head_commit.message }}` | The commit message used to check the regular expression against. See [`commit-message`](#commit-message) for more information.  |
-| `force-valid-regexp` | `force\-time\-window`                                                                        | A regular expression to check against the commit message. See [`force-valid-regepx`](#force-valid-regexp) for more information. |
-| `timestamp`          | now                                                                                          | Unix timestamp (in seconds) to validate the time windows against. See [`timestamp`](#timestamp) for more information.           |
+| Parameter            | Default value                                                                                | Description                                                                                                                         |
+|----------------------|----------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
+| `allowed`            | `""`                                                                                         | The allowed time windows in YAML. See [`allowed` & `blocked`](#allowed--blocked) for more information.                              |
+| `blocked`            | `""`                                                                                         | The blocked time windows in YAML. See [`allowed` & `blocked`](#allowed--blocked) for more information.                              |
+| `commit-message`     | `${{ github.event.head_commit.message \|\| github.event.workflow_run.head_commit.message }}` | The commit message against which the regular expression is validated. See [`commit-message`](#commit-message) for more information. |
+| `force-valid-regexp` | `force\-time\-window`                                                                        | A regular expression to check against the commit message. See [`force-valid-regepx`](#force-valid-regexp) for more information.     |
+| `timestamp`          | now                                                                                          | Unix timestamp (in seconds) to validate the time windows against. See [`timestamp`](#timestamp) for more information.               |
 
 #### `allowed` & `blocked`
 
@@ -47,7 +47,8 @@ Each of these inputs receives an array of time windows defined in a YAML structu
 
 #### `commit-message`
 
-If you want to give a specific commit message. By default, this is inferred from the workflow with the following GitHub
+If you want to provide a specific commit message. By default, this is inferred from the workflow with the following
+GitHub
 Action expression:
 
 ```
@@ -56,7 +57,8 @@ ${{ github.event.head_commit.message || github.event.workflow_run.head_commit.me
 
 #### `force-valid-regexp`
 
-The regular expression used to validate the commit message against. If they match, the result is automatically set to `is_valid=true`.
+The regular expression used to validate the commit message. If there is a match, the result is automatically set
+to `is_valid=true`.
 
 #### `timestamp`
 
