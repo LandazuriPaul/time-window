@@ -15,14 +15,14 @@ jobs:
     outputs:
       next_semantic_version: ${{ steps.semantic.outputs.NEXT_SEMANTIC_RELEASE_VERSION }}
     steps:
-      - name: Checkout
+      - name: Checkout PR
         if: github.event_name == 'pull_request'
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: ${{ github.head_ref }}
 
-      - name: Checkout
+      - name: Checkout Push
         if: github.event_name != 'push'
         uses: actions/checkout@v4
         with:
