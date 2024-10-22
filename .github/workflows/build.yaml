@@ -2,6 +2,9 @@ name: Build artifacts
 
 on:
   workflow_call:
+    outputs:
+      new-release-published:
+        type: boolean
 
 env:
   REGISTRY: ghcr.io
