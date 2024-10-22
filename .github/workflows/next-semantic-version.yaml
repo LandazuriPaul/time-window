@@ -2,12 +2,6 @@ name: Next Semantic Version
 
 on:
   workflow_call:
-    inputs:
-      is_branch_main:
-        description: Is the branch "main" to run the semantic-version script
-        type: boolean
-        default: true
-
     outputs:
       next_release_version:
         description: The next semantic release version
@@ -25,16 +19,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Get branch name
-        id: branch
-        run : |
-          echo "GITHUB_REF=$GITHUB_REF"
-          if [[ ${{ inputs.is_branch_main }} == true ]]; then
-            echo "BRANCH=main" >> "$GITHUB_OUTPUT"
-          else
-            echo "BRANCH=$GITHUB_REF" >> "$GITHUB_OUTPUT"
-          fi
+          ref: ${{ github.head_ref }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -47,6 +32,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          npx semantic-release --dry-run --no-ci --branches "${{ steps.branch.outputs.BRANCH }}"
-          export NEXT_SEMANTIC_RELEASE_VERSION=$(npx semantic-release --dry-run --no-ci --branches "${{ steps.branch.outputs.BRANCH }}" | grep 'next release version is' | sed -E 's/.* ([[:digit:].]+)$/\1/')
+          npx semantic-release --dry-run --no-ci --branches "${{ github.head_ref }}"
+          export NEXT_SEMANTIC_RELEASE_VERSION=$(npx semantic-release --dry-run --no-ci --branches "${{ github.head_ref }}" | grep 'next release version is' | sed -E 's/.* ([[:digit:].]+)$/\1/')
           echo "NEXT_SEMANTIC_RELEASE_VERSION=${NEXT_SEMANTIC_RELEASE_VERSION}" >> $GITHUB_OUTPUT

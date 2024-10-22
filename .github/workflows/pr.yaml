@@ -14,8 +14,6 @@ jobs:
 
   next_semantic_version:
     uses: ./.github/workflows/next-semantic-version.yaml
-    with:
-      is_branch_main: false
 
   check_docker_image:
     needs:
