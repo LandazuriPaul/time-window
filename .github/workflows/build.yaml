@@ -2,9 +2,9 @@ name: Build artifacts
 
 on:
   workflow_call:
-    inputs:
+    secrets:
       GITHUB_TOKEN:
-        type: string
+        required: true
         description: GITHUB_TOKEN to access the repository
 
 env:
@@ -13,8 +13,8 @@ env:
 jobs:
   next_semantic_version:
     uses: ./.github/workflows/next-semantic-version.yaml
-    with:
-      GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
+    secrets:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   docker_image:
     needs:

@@ -11,7 +11,7 @@ jobs:
 
   next_semantic_version:
     uses: ./.github/workflows/next-semantic-version.yaml
-    with:
+    secrets:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   check_docker_image:

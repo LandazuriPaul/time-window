@@ -2,9 +2,9 @@ name: Next Semantic Version
 
 on:
   workflow_call:
-    inputs:
+    secrets:
       GITHUB_TOKEN:
-        type: string
+        required: true
         description: GITHUB_TOKEN to access the repository
 
     outputs:
