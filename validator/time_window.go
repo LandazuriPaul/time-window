@@ -2,9 +2,10 @@ package validator
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/robfig/cron/v3"
 	"gopkg.in/yaml.v3"
-	"time"
 )
 
 var cronParser = cron.NewParser(cron.Minute | cron.Hour | cron.Dom | cron.Month | cron.Dow)
@@ -13,7 +14,6 @@ type TimeWindow struct {
 	CronExpression string        `yaml:"cronExpression"`
 	Duration       time.Duration `yaml:"duration"`
 	Name           string        `yaml:"name"`
-	Timezone       string        `yaml:"timezone"`
 	CronSchedule   cron.Schedule
 }
 
@@ -45,8 +45,5 @@ func (tw *TimeWindow) parseCronExpression() error {
 
 func (tw *TimeWindow) isTimeIn(timestamp time.Time) bool {
 	// FIXME: Timezone!
-	if tw.CronSchedule.Next(timestamp.Add(-tw.Duration)).Before(timestamp) {
-		return true
-	}
-	return false
+	return tw.CronSchedule.Next(timestamp.Add(-tw.Duration)).Before(timestamp)
 }

@@ -12,6 +12,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+         go-version: 1.23.2
+
+      - name: Install dependencies
+        run: go mod download
+
+      - name: Test with the Go CLI
+        run: go test -v ./...
+
   test_action:
     name: Test the GitHub Action
     runs-on: ubuntu-latest
@@ -27,12 +38,10 @@ jobs:
             - name: Office hours
               cronExpression: "0 9 * * 1-5"
               duration: 8h
-              timezone: Europe/London
           blocked: |
             - name: Christmas holidays
               cronExpression: "0 0 24 12 *"
               duration: 96h
-              timezone: Europe/London
 
       - name: Print results
         shell: bash
@@ -41,8 +50,8 @@ jobs:
           echo "is_valid: ${{ steps.time_window.outputs.is_valid }}"
           echo "message: ${{ steps.time_window.outputs.message }}"
           echo "timestamp: ${{ steps.time_window.outputs.timestamp }}"
-          echo "result: ${{ steps.time_window.outputs.result }}"
+          echo `result: ${{ steps.time_window.outputs.result }}`
           echo "json_error: ${{ fromJSON(steps.time_window.outputs.result).error }}"
-          echo "json_is_valid: ${{ fromJSON(steps.time_window.outputs.result).isValid }}"
+          echo "json_isValid: ${{ fromJSON(steps.time_window.outputs.result).isValid }}"
           echo "json_message: ${{ fromJSON(steps.time_window.outputs.result).message }}"
           echo "json_timestamp: ${{ fromJSON(steps.time_window.outputs.result).timestamp }}"

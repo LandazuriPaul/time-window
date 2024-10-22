@@ -1,7 +1,6 @@
 package validator
 
 import (
-	"flag"
 	"fmt"
 	"regexp"
 	"time"
@@ -12,21 +11,11 @@ type Validator struct {
 	Blocked          []*TimeWindow
 	CommitMessage    string
 	ForceValidRegexp *regexp.Regexp
-	Timestamp        time.Time
 }
 
-func NewValidator() (*Validator, error) {
-	// parse flagged inputs
-	allowedFlag := flag.String("allowed", "", "a YAML string representing the allowed windows")
-	blockedFlag := flag.String("blocked", "", "a YAML string representing the blocked windows")
-	forceValidRegexpFlag := flag.String("force_valid_regexp", "", "a regular expression to check the commit message to bypass time window checks")
-	commitMessageFlag := flag.String("commit_message", "", "the commit message")
-	timestampFlag := flag.Int64("timestamp", 0, "Unix timestamp (in seconds) used to check the time windows")
-	flag.Parse()
-
+func NewValidator(allowedInput, blockedInput, forceValidRegexpInput, commitMessageInput *string) (*Validator, error) {
 	// init config fields
 	commitMessage := ""
-	timestamp := time.Now() // FIXME: Timezone!
 	var (
 		err              error
 		allowed          []*TimeWindow
@@ -35,37 +24,32 @@ func NewValidator() (*Validator, error) {
 	)
 
 	// allowed
-	if allowedFlag != nil && *allowedFlag != "" {
-		allowed, err = NewTimeWindows(*allowedFlag)
+	if allowedInput != nil && *allowedInput != "" {
+		allowed, err = NewTimeWindows(*allowedInput)
 		if err != nil {
 			return nil, fmt.Errorf("parsing the allowed windows: %w", err)
 		}
 	}
 
 	// blocked
-	if blockedFlag != nil && *blockedFlag != "" {
-		blocked, err = NewTimeWindows(*blockedFlag)
+	if blockedInput != nil && *blockedInput != "" {
+		blocked, err = NewTimeWindows(*blockedInput)
 		if err != nil {
 			return nil, fmt.Errorf("parsing the blocked windows: %w", err)
 		}
 	}
 
 	// forceValidRegexp
-	if forceValidRegexpFlag != nil && *forceValidRegexpFlag != "" {
-		forceValidRegexp, err = regexp.Compile(*forceValidRegexpFlag)
+	if forceValidRegexpInput != nil && *forceValidRegexpInput != "" {
+		forceValidRegexp, err = regexp.Compile(*forceValidRegexpInput)
 		if err != nil {
 			return nil, fmt.Errorf("compiling the force-valid-regexp: %w", err)
 		}
 	}
 
 	// commit Message
-	if commitMessageFlag != nil && *commitMessageFlag != "" {
-		commitMessage = *commitMessageFlag
-	}
-
-	// timestamp
-	if timestampFlag != nil && *timestampFlag != 0 {
-		timestamp = time.Unix(*timestampFlag, 0)
+	if commitMessageInput != nil && *commitMessageInput != "" {
+		commitMessage = *commitMessageInput
 	}
 
 	return &Validator{
@@ -73,11 +57,25 @@ func NewValidator() (*Validator, error) {
 		Blocked:          blocked,
 		CommitMessage:    commitMessage,
 		ForceValidRegexp: forceValidRegexp,
-		Timestamp:        timestamp,
 	}, nil
 }
 
-func (v *Validator) IsForceValidated() bool {
+func (v *Validator) Validate(timestamp time.Time) Result {
+	if v.isForceValidated() {
+		return Result{
+			IsValid:   true,
+			Message:   v.forceValidatedMessage(),
+			Timestamp: timestamp.Unix(),
+		}
+	}
+	return v.validateTimestamp(timestamp)
+}
+
+func (v *Validator) forceValidatedMessage() string {
+	return fmt.Sprintf("forced validated with regexp %s and commit message %s", v.ForceValidRegexp, v.CommitMessage)
+}
+
+func (v *Validator) isForceValidated() bool {
 	if v.ForceValidRegexp != nil && v.CommitMessage != "" {
 		found := v.ForceValidRegexp.Find([]byte(v.CommitMessage))
 		if found != nil {
@@ -87,17 +85,17 @@ func (v *Validator) IsForceValidated() bool {
 	return false
 }
 
-func (v *Validator) ValidateTimestamp() Result {
+func (v *Validator) validateTimestamp(timestamp time.Time) Result {
 	// init result with timestamp
 	r := Result{
 		IsValid:   false,
-		Timestamp: v.Timestamp.Unix(),
+		Timestamp: timestamp.Unix(),
 	}
 
-	// requires at least one of allowed or blocked
-	if v.Allowed == nil && v.Blocked == nil {
-		r.Error = "at least one of `allowed` or `blocked` is required"
-		r.Message = "Missing `allowed` and `blocked`. This can be due to a misconfiguration"
+	// requires at least the allowed input
+	if v.Allowed == nil {
+		r.Error = "the required `allowed` input is missing"
+		r.Message = "Missing `allowed` input. This can be due to a misconfiguration"
 		return r
 	}
 
@@ -106,14 +104,14 @@ func (v *Validator) ValidateTimestamp() Result {
 	var isInAllowed, isInBlocked bool
 	var allowedWindowName, blockedWindowName string
 	for _, tw := range v.Allowed {
-		if tw.isTimeIn(v.Timestamp) {
+		if tw.isTimeIn(timestamp) {
 			isInAllowed = true
 			allowedWindowName = tw.Name
 			break
 		}
 	}
 	for _, tw := range v.Blocked {
-		if tw.isTimeIn(v.Timestamp) {
+		if tw.isTimeIn(timestamp) {
 			isInBlocked = true
 			blockedWindowName = tw.Name
 			break
@@ -122,14 +120,14 @@ func (v *Validator) ValidateTimestamp() Result {
 
 	// blocked window takes precedence
 	if isInBlocked {
-		r.Message = fmt.Sprintf("timestamp in blocked window %s", blockedWindowName)
+		r.Message = fmt.Sprintf("timestamp in blocked window '%s'", blockedWindowName)
 	} else {
 		if isInAllowed {
 			// timestamp is only allowed if it is both:
 			//- NOT IN a blocked window
 			//- IN an allowed window
 			r.IsValid = true
-			r.Message = fmt.Sprintf("timestamp in allowed window %s", allowedWindowName)
+			r.Message = fmt.Sprintf("timestamp in allowed window '%s'", allowedWindowName)
 		} else {
 			r.Message = "the timestamp isn't in any allowed window"
 		}
