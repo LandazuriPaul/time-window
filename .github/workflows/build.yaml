@@ -4,7 +4,9 @@ on:
   workflow_call:
     outputs:
       new-release-published:
-        type: boolean
+        value: ${{ jobs.get-next-version.outputs.new-release-published }}
+      new-release-version:
+        value: ${{ jobs.get-next-version.outputs.new-release-version }}
 
 env:
   REGISTRY: ghcr.io
