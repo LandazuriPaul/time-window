@@ -18,8 +18,6 @@ jobs:
     needs:
       - test
     uses: ./.github/workflows/build.yaml
-    with:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   release:
     needs:
