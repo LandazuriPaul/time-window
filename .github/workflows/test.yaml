@@ -50,7 +50,9 @@ jobs:
           echo "is_valid: ${{ steps.time_window.outputs.is_valid }}"
           echo "message: ${{ steps.time_window.outputs.message }}"
           echo "timestamp: ${{ steps.time_window.outputs.timestamp }}"
-          echo `result: ${{ steps.time_window.outputs.result }}`
+          cat <<EOL
+          result: ${{ steps.time_window.outputs.result }}
+          EOL
           echo "json_error: ${{ fromJSON(steps.time_window.outputs.result).error }}"
           echo "json_isValid: ${{ fromJSON(steps.time_window.outputs.result).isValid }}"
           echo "json_message: ${{ fromJSON(steps.time_window.outputs.result).message }}"
