@@ -48,4 +48,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          echo "github.head_ref: ${{ github.head_ref }}"
+          echo "ref: ${GITHUB_REF##*/}"
+          unset GITHUB_ACTIONS && npx semantic-release --dry-run --no-ci --branches "${{ steps.branch.outputs.BRANCH }}"
           echo "NEXT_SEMANTIC_RELEASE_VERSION=$(unset GITHUB_ACTIONS && npx semantic-release --dry-run --no-ci --branches "${{ steps.branch.outputs.BRANCH }}" | grep 'next release version is' | sed -E 's/.* ([[:digit:].]+)$/\1/')" >> $GITHUB_OUTPUT
