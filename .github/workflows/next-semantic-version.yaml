@@ -15,11 +15,27 @@ jobs:
     outputs:
       next_semantic_version: ${{ steps.semantic.outputs.NEXT_SEMANTIC_RELEASE_VERSION }}
     steps:
+      - name: Get branch name
+        id: branch
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "BRANCH=${{ github.head_ref }}" >> $GITHUB_OUTPUT
+          else
+            echo "BRANCH=${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
+          fi
+
       - name: Checkout
+        if: github.event_name == "pull_request"
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: ${{ github.head_ref }}
+
+      - name: Checkout
+        if: github.event_name != "pull_request"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -32,4 +48,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "NEXT_SEMANTIC_RELEASE_VERSION=$(unset GITHUB_ACTIONS && npx semantic-release --dry-run --no-ci --branches "${{ github.head_ref }}" | grep 'next release version is' | sed -E 's/.* ([[:digit:].]+)$/\1/')" >> $GITHUB_OUTPUT
+          echo "NEXT_SEMANTIC_RELEASE_VERSION=$(unset GITHUB_ACTIONS && npx semantic-release --dry-run --no-ci --branches "${{ steps.branch.outputs.BRANCH }}" | grep 'next release version is' | sed -E 's/.* ([[:digit:].]+)$/\1/')" >> $GITHUB_OUTPUT
