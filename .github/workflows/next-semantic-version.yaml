@@ -29,11 +29,11 @@ jobs:
       - name: Get branch name
         id: branch
         run : |
-          git rev-parse --abbrev-ref HEAD
+          echo "GITHUB_REF=$GITHUB_REF"
           if [[ ${{ inputs.is_branch_main }} == true ]]; then
             echo "BRANCH=main" >> "$GITHUB_OUTPUT"
           else
-            echo "BRANCH=$(git rev-parse --abbrev-ref HEAD)" >> "$GITHUB_OUTPUT"
+            echo "BRANCH=$GITHUB_REF" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Setup Node.js
