@@ -1,0 +1,35 @@
+name: Next Semantic Version
+
+on:
+  workflow_call:
+    outputs:
+      next_release_version:
+        description: The next semantic release version
+        value: ${{ jobs.next_version.outputs.next_semantic_version }}
+
+jobs:
+  next_version:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      next_semantic_version: ${{ steps.semantic.outputs.NEXT_SEMANTIC_RELEASE_VERSION }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.head_ref }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+
+      - name: Get next semantic version
+        id: semantic
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "NEXT_SEMANTIC_RELEASE_VERSION=$(unset GITHUB_ACTIONS && npx semantic-release --dry-run --no-ci --branches "${{ github.head_ref }}" | grep 'next release version is' | sed -E 's/.* ([[:digit:].]+)$/\1/')" >> $GITHUB_OUTPUT
