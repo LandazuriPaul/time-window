@@ -29,6 +29,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Force local Dockerfile for testing
+        run: |
+          sed -i 's/docker:\/\/ghcr.io\/landazuripaul\/time-window-validator:v[0-9]*.[0-9]*.[0-9]*/Dockerfile/g' action.yaml
+
       - name: Test  Docker action
         id: time_window
         uses: ./
