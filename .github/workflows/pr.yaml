@@ -12,13 +12,15 @@ jobs:
   test:
     uses: ./.github/workflows/test.yaml
 
-  next_semantic_version:
-    uses: ./.github/workflows/next-semantic-version.yaml
+  get-next-version:
+    uses: semantic-release-action/next-release-version/.github/workflows/next-release-version.yml@v4
 
   check_docker_image:
-    needs:
-      - next_semantic_version
+    name: Check Docker image version
     runs-on: ubuntu-latest
+    if: needs.get-next-version.outputs.new-release-published == 'true'
+    needs:
+      - get-next-version
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -32,7 +34,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            if ("${{ needs.next_semantic_version.outputs.next_release_version }}" !== "${{ steps.current_version.outputs.DOCKER_IMAGE_VERSION }}") {
-              core.setFailed("The action.yaml's Docker image is pointing at ${{ steps.current_version.outputs.DOCKER_IMAGE_VERSION }} but it should point at the next semantic version ${{ needs.next_semantic_version.outputs.next_release_version }}")
+            if ("${{ needs.get-next-version.outputs.new-release-version }}" !== "${{ steps.current_version.outputs.DOCKER_IMAGE_VERSION }}") {
+              core.setFailed("The action.yaml's Docker image is pointing at ${{ steps.current_version.outputs.DOCKER_IMAGE_VERSION }} but it should point at the next semantic version ${{ needs.get-next-version.outputs.new-release-version }}")
             }
 
