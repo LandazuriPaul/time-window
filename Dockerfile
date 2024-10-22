@@ -1,4 +1,6 @@
-FROM golang:1.23.2-alpine AS builder
+ARG GO_VERSION=1.23.2
+
+FROM golang:${GO_VERSION}-alpine AS builder
 
 WORKDIR /time-window
 

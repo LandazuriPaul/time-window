@@ -1,8 +1,7 @@
 name: Test the Time Window action
 
 on:
-  pull_request:
-  push:
+  workflow_call:
 
 jobs:
   test_cli:
